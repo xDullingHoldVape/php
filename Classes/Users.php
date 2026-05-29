@@ -5,9 +5,9 @@ use App\Core\Database;
 use PDO;
 
 /**
- * UserRepository — all DB operations for the users table.
+ * Users — all DB operations for the users table.
  */
-class UserRepository
+class Users
 {
     private PDO $db;
 
