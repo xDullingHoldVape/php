@@ -1,22 +1,18 @@
 <?php
 namespace App\Core;
-
+ 
 use PDO;
 use PDOException;
-
-/**
- * Database - singleton PDO connection.
- * Edit the constants below to match MySQL setup.
- */
+ 
 class Database
 {
     private static ?PDO $instance = null;
-
+ 
     private static string $host   = '127.0.0.1';
     private static string $dbname = 'artemgrozniy';
     private static string $user   = 'root';
-    private static string $pass   = '';          // XAMPP default
-
+    private static string $pass   = '';
+ 
     public static function getConnection(): PDO
     {
         if (self::$instance === null) {
@@ -38,3 +34,4 @@ class Database
         return self::$instance;
     }
 }
+ 

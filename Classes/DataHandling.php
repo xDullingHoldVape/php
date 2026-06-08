@@ -1,22 +1,18 @@
 <?php
 namespace App\Services;
-
+ 
 use App\Core\Database;
 use PDO;
-
-/**
- * DataHandling — all DB operations for the passwords table.
- */
+ 
 class DataHandling
 {
     private PDO $db;
-
+ 
     public function __construct()
     {
         $this->db = Database::getConnection();
     }
-
-    /** Return all saved records for a user (encrypted blobs). */
+ 
     public function findByUser(int $userId): array
     {
         $st = $this->db->prepare(
@@ -25,8 +21,7 @@ class DataHandling
         $st->execute([':uid' => $userId]);
         return $st->fetchAll();
     }
-
-    /** Return a single record (must belong to user for safety). */
+ 
     public function findOne(int $id, int $userId): ?array
     {
         $st = $this->db->prepare(
@@ -35,8 +30,7 @@ class DataHandling
         $st->execute([':id' => $id, ':uid' => $userId]);
         return $st->fetch() ?: null;
     }
-
-    /** Insert a new password record. Password and notes arrive pre-encrypted. */
+ 
     public function create(
         int    $userId,
         string $siteName,
@@ -57,8 +51,7 @@ class DataHandling
         ]);
         return (int) $this->db->lastInsertId();
     }
-
-    /** Delete a record (only if it belongs to the user). */
+ 
     public function delete(int $id, int $userId): bool
     {
         $st = $this->db->prepare(
@@ -67,8 +60,7 @@ class DataHandling
         $st->execute([':id' => $id, ':uid' => $userId]);
         return $st->rowCount() > 0;
     }
-
-    /** Log a generation event. */
+ 
     public function logGeneration(
         int $userId, int $length,
         int $uppercase, int $lowercase, int $numbers, int $special
