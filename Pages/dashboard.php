@@ -9,7 +9,7 @@ use App\Services\PasswordGenerator;
 
 $userId  = $_SESSION['user_id'];
 $rawKey  = base64_decode($_SESSION['raw_key']);
-$enc     = new EncryptionService();
+$enc = new EncryptionService();
 $pwdRepo = new PasswordRepository();
 $message = '';
 $msgType = '';
@@ -27,10 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
 
 // Save a new password entry
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'save') {
-    $siteName     = trim($_POST['site_name']     ?? '');
+    $siteName = trim($_POST['site_name'] ?? '');
     $siteUsername = trim($_POST['site_username'] ?? '');
-    $plainPwd     = $_POST['plain_password']      ?? '';
-    $notes        = trim($_POST['notes']          ?? '');
+    $plainPwd  = $_POST['plain_password'] ?? '';
+    $notes  = trim($_POST['notes'] ?? '');
 
     if ($siteName === '' || $plainPwd === '') {
         $message = 'Site name and password are required.'; $msgType = 'error';
@@ -44,19 +44,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'save'
 
 // Generate password via AJAX (returns JSON)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'generate') {
-    $mode      = $_POST['mode'] ?? 'count';
+    $mode = $_POST['mode'] ?? 'count';
     $generator = new PasswordGenerator();
 
     if ($mode === 'percent') {
-        $len  = max(4, (int)($_POST['total_length'] ?? 12));
-        $upP  = (float)($_POST['pct_upper']   ?? 25);
-        $loP  = (float)($_POST['pct_lower']   ?? 25);
-        $nuP  = (float)($_POST['pct_numbers'] ?? 25);
-        $spP  = (float)($_POST['pct_special'] ?? 25);
-        $pwd  = $generator->fromPercents($len, $upP, $loP, $nuP, $spP);
+        $len = max(4, (int)($_POST['total_length'] ?? 12));
+        $upP = (float)($_POST['pct_upper'] ?? 25);
+        $loP = (float)($_POST['pct_lower'] ?? 25);
+        $nuP = (float)($_POST['pct_numbers'] ?? 25);
+        $spP = (float)($_POST['pct_special'] ?? 25);
+        $pwd = $generator->fromPercents($len, $upP, $loP, $nuP, $spP);
     } else {
-        $up = max(0, (int)($_POST['count_upper']   ?? 2));
-        $lo = max(0, (int)($_POST['count_lower']   ?? 3));
+        $up = max(0, (int)($_POST['count_upper'] ?? 2));
+        $lo = max(0, (int)($_POST['count_lower'] ?? 3));
         $nu = max(0, (int)($_POST['count_numbers'] ?? 2));
         $sp = max(0, (int)($_POST['count_special'] ?? 2));
         $pwd = $generator->generate($up, $lo, $nu, $sp);
@@ -135,7 +135,7 @@ nav a:hover { text-decoration:underline; }
     <p class="<?= $msgType ?>"><?= htmlspecialchars($message) ?></p>
   <?php endif; ?>
 
-  <!Password Generator
+  // Password Generator
   <div class="section">
     <h3>Password Generator</h3>
 
@@ -144,7 +144,7 @@ nav a:hover { text-decoration:underline; }
       <button class="tab-btn" onclick="switchTab('percent')">By Percent</button>
     </div>
 
-    <!By count>
+    // By Count
     <div id="tab-count" class="tab-panel active">
       <div class="row-4">
         <div>
@@ -169,7 +169,7 @@ nav a:hover { text-decoration:underline; }
       </p>
     </div>
 
-    <!By percent>
+    // By Percent
     <div id="tab-percent" class="tab-panel">
       <div class="row-2" style="margin-bottom:10px">
         <div>
@@ -209,7 +209,7 @@ nav a:hover { text-decoration:underline; }
     </div>
   </div>
 
-  <!Save New Password
+  // Save New Password
   <div class="section">
     <h3>Save New Password</h3>
     <form method="POST">
@@ -236,7 +236,7 @@ nav a:hover { text-decoration:underline; }
     </form>
   </div>
 
-  <!Saved Passwords
+  // Saved Passwords
   <div class="section">
     <h3>Saved Passwords (<?= count($entries) ?>)</h3>
 
@@ -280,7 +280,7 @@ nav a:hover { text-decoration:underline; }
 </div>
 
 <script>
-//Tab switching
+// Tab switching
 let activeMode = 'count';
 function switchTab(mode) {
     activeMode = mode;
@@ -290,7 +290,7 @@ function switchTab(mode) {
     event.target.classList.add('active');
 }
 
-//pdate total label
+// Update total label
 function updateTotal() {
     const t = ['count_upper','count_lower','count_numbers','count_special']
               .reduce((s,id) => s + (parseInt(document.getElementById(id)?.value)||0), 0);
@@ -299,7 +299,7 @@ function updateTotal() {
 ['count_upper','count_lower','count_numbers','count_special']
     .forEach(id => document.getElementById(id)?.addEventListener('input', updateTotal));
 
-//Generate
+// Generate
 function generatePassword() {
     const body = new FormData();
     body.append('action', 'generate');

@@ -1,7 +1,7 @@
 <?php
 namespace App\Core;
- 
-use PDO;
+ // Database - a palce used for storing user's data
+use PDO; //using singleton PDO
 use PDOException;
  
 class Database

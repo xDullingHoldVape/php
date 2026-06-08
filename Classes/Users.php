@@ -2,8 +2,9 @@
 namespace App\Services;
  
 use App\Core\Database;
-use PDO;
- 
+use PDO;|
+
+// Users - Handles all database operations related to users
 class Users
 {
     private PDO $db;
@@ -13,6 +14,7 @@ class Users
         $this->db = Database::getConnection();
     }
  
+    // Returns a user by ID
     public function findById(int $id): ?array
     {
         $st = $this->db->prepare('SELECT * FROM users WHERE id = :id LIMIT 1');
@@ -20,6 +22,7 @@ class Users
         return $st->fetch() ?: null;
     }
  
+    // Returns a user by username
     public function findByUsername(string $username): ?array
     {
         $st = $this->db->prepare('SELECT * FROM users WHERE username = :u LIMIT 1');
@@ -27,6 +30,7 @@ class Users
         return $st->fetch() ?: null;
     }
  
+    // Checks whether a username already exists
     public function usernameExists(string $username): bool
     {
         $st = $this->db->prepare('SELECT 1 FROM users WHERE username = :u LIMIT 1');
@@ -34,6 +38,7 @@ class Users
         return (bool) $st->fetchColumn();
     }
  
+    // Checks whether an email address already exists
     public function emailExists(string $email): bool
     {
         $st = $this->db->prepare('SELECT 1 FROM users WHERE email = :e LIMIT 1');
@@ -41,6 +46,8 @@ class Users
         return (bool) $st->fetchColumn();
     }
  
+    // Creates a new user account
+    // The encryption key must already be wrapped before calling this method
     public function create(string $username, string $email, string $password, string $wrappedKey): int
     {
         $hash = password_hash($password, PASSWORD_DEFAULT);
@@ -57,6 +64,7 @@ class Users
         return (int) $this->db->lastInsertId();
     }
  
+    // Updates the user's password and wrapped encryption key
     public function updatePassword(int $userId, string $newPassword, string $newWrappedKey): void
     {
         $hash = password_hash($newPassword, PASSWORD_DEFAULT);

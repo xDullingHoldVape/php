@@ -11,12 +11,12 @@ $success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $current = $_POST['current_password'] ?? '';
-    $new     = $_POST['new_password']     ?? '';
+    $new = $_POST['new_password'] ?? '';
     $confirm = $_POST['confirm_password'] ?? '';
 
-    if ($current === '')             $errors[] = 'Current password is required.';
-    if (strlen($new) < 6)            $errors[] = 'New password must be at least 6 characters.';
-    if ($new !== $confirm)           $errors[] = 'New passwords do not match.';
+    if ($current === '') $errors[] = 'Current password is required.';
+    if (strlen($new) < 6) $errors[] = 'New password must be at least 6 characters.';
+    if ($new !== $confirm) $errors[] = 'New passwords do not match.';
 
     if (empty($errors)) {
         $repo = new UserRepository();
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'Current password is incorrect.';
         } else {
             // Re-wrap the encryption key with the new password
-            $enc        = new EncryptionService();
+            $enc = new EncryptionService();
             $newWrapped = $enc->reWrapKey($user['enc_key'], $current, $new);
 
             $repo->updatePassword($user['id'], $new, $newWrapped);
@@ -63,17 +63,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php foreach ($errors as $e): ?>
       <p class="error"><?= htmlspecialchars($e) ?></p>
     <?php endforeach; ?>
-
     <form method="POST">
       <label>Current Password</label>
       <input type="password" name="current_password" required autofocus>
-
       <label>New Password <small>(min 6 chars)</small></label>
       <input type="password" name="new_password" required>
-
       <label>Confirm New Password</label>
       <input type="password" name="confirm_password" required>
-
       <button type="submit">Change Password</button>
     </form>
     <p class="link"><a href="dashboard.php">← Back to Dashboard</a></p>

@@ -3,7 +3,8 @@ namespace App\Services;
  
 use App\Core\Database;
 use PDO;
- 
+
+// Data Handling -  Handles all database operations related to stored passwords
 class DataHandling
 {
     private PDO $db;
@@ -12,7 +13,8 @@ class DataHandling
     {
         $this->db = Database::getConnection();
     }
- 
+
+    // Returns all password records belonging to a user
     public function findByUser(int $userId): array
     {
         $st = $this->db->prepare(
@@ -22,6 +24,7 @@ class DataHandling
         return $st->fetchAll();
     }
  
+    // Returns a single password record for a specific user
     public function findOne(int $id, int $userId): ?array
     {
         $st = $this->db->prepare(
@@ -31,8 +34,10 @@ class DataHandling
         return $st->fetch() ?: null;
     }
  
+    // Creates a new password record in the database
+    // Password and notes must already be encrypted
     public function create(
-        int    $userId,
+        int $userId,
         string $siteName,
         string $siteUsername,
         string $encryptedPassword,
@@ -43,15 +48,16 @@ class DataHandling
              VALUES (:uid, :site, :uname, :pwd, :notes)'
         );
         $st->execute([
-            ':uid'   => $userId,
-            ':site'  => $siteName,
+            ':uid' => $userId,
+            ':site' => $siteName,
             ':uname' => $siteUsername,
-            ':pwd'   => $encryptedPassword,
+            ':pwd' => $encryptedPassword,
             ':notes' => $encryptedNotes,
         ]);
         return (int) $this->db->lastInsertId();
     }
  
+    // Deletes a password record if it belongs to the user
     public function delete(int $id, int $userId): bool
     {
         $st = $this->db->prepare(
@@ -61,6 +67,7 @@ class DataHandling
         return $st->rowCount() > 0;
     }
  
+    // Saves password generation statistics to the log table
     public function logGeneration(
         int $userId, int $length,
         int $uppercase, int $lowercase, int $numbers, int $special
@@ -71,8 +78,8 @@ class DataHandling
         );
         $st->execute([
             ':uid' => $userId, ':len' => $length,
-            ':up'  => $uppercase, ':lo' => $lowercase,
-            ':num' => $numbers,   ':sp' => $special,
+            ':up' => $uppercase, ':lo' => $lowercase,
+            ':num' => $numbers, ':sp' => $special,
         ]);
     }
 }

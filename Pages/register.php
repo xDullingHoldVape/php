@@ -15,20 +15,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $confirm  = $_POST['confirm']  ?? '';
  
-    if (strlen($username) < 3)                      $errors[] = 'Username must be at least 3 characters.';
+    if (strlen($username) < 3) $errors[] = 'Username must be at least 3 characters.';
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email address.';
-    if (strlen($password) < 6)                      $errors[] = 'Password must be at least 6 characters.';
-    if ($password !== $confirm)                     $errors[] = 'Passwords do not match.';
+    if (strlen($password) < 6) $errors[] = 'Password must be at least 6 characters.';
+    if ($password !== $confirm) $errors[] = 'Passwords do not match.';
  
     if (empty($errors)) {
         $repo = new Users();
         if ($repo->usernameExists($username)) $errors[] = 'Username already taken.';
-        if ($repo->emailExists($email))       $errors[] = 'Email already registered.';
+        if ($repo->emailExists($email)) $errors[] = 'Email already registered.';
     }
  
     if (empty($errors)) {
-        $enc        = new Encryption();
-        $rawKey     = $enc->generateKey();
+        $enc = new Encryption();
+        $rawKey = $enc->generateKey();
         $wrappedKey = $enc->wrapKey($rawKey, $password);
  
         $repo = new Users();
@@ -61,16 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="POST">
       <label>Username</label>
       <input type="text" name="username" value="<?= htmlspecialchars($_POST['username'] ?? '') ?>" required autofocus>
-
       <label>Email</label>
       <input type="email" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
-
       <label>Password <small>(min 6 chars)</small></label>
       <input type="password" name="password" required>
-
       <label>Confirm Password</label>
       <input type="password" name="confirm" required>
-
       <button type="submit">Register</button>
     </form>
     <p class="link">Already have an account? <a href="login.php">Login</a></p>
